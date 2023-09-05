@@ -54,49 +54,23 @@
   ],
 
   "actors" : [
-    {
-      "trans": [-21.6238, 20.0496, 17.1191], // translation
-      "etype": "fuel-cell",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
-      "lump": {
-        "name":"test-fuel-cell"
-      }
-    },
+// Start automatic actors from blender
+//Orbs below
+{"trans": [280.1160583496094, 160.98110961914062, 339.4514465332031], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-1"}}, {"trans": [280.1160583496094, 164.79742431640625, 339.4514465332031], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-2"}}, {"trans": [280.1160583496094, 169.29232788085938, 339.4514465332031], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-3"}}, {"trans": [280.1160583496094, 160.98110961914062, 344.21630859375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-4"}}, {"trans": [280.1160583496094, 164.79742431640625, 344.21630859375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-5"}}, {"trans": [280.1160583496094, 169.29232788085938, 344.21630859375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-6"}}, {"trans": [280.1160583496094, 160.98110961914062, 333.454833984375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-7"}}, {"trans": [280.1160583496094, 164.79742431640625, 333.454833984375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-8"}}, {"trans": [280.1160583496094, 169.29232788085938, 333.454833984375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-9"}}, {"trans": [233.68125915527344, 160.98110961914062, 339.4514465332031], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-10"}}, {"trans": [266.0086669921875, 154.3700714111328, 338.5430603027344], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-11"}}, {"trans": [250.3292694091797, 160.98110961914062, 339.4514465332031], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-12"}}, {"trans": [250.3292694091797, 160.98110961914062, 344.21630859375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-13"}}, {"trans": [250.3292694091797, 164.79742431640625, 344.21630859375], "etype": "money", "game_task": 0, "quat": [0, 0, 0, 1], "bsphere": [0.0, 0.0, 0.0, 0.0], "lump": {"name": "test-zone-money-14"}},
+//Cells below
 
-    {
-      "trans": [-15.2818, 15.2461, 17.1360], // translation
-      "etype": "crate",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-15.2818, 15.2461, 17.1360, 10], // bounding sphere
-      "lump": {
-        "name":"test-crate",
-        "crate-type":"'steel",
-        "eco-info": ["int32", 5, 10]
-      }
-    },
+//Crate Collection not found
 
-    {
-      "trans": [-5.4630, 17.4553, 1.6169], // translation
-      "etype": "eco-yellow",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat" : [0, 0, 0, 1], // quaternion
-      "bsphere": [-5.4630, 17.4553, 1.6169, 10], // bounding sphere
-      "lump": {
-        "name":"test-eco"
-      }
-    },
-    {
-      "trans": [-7.41, 3.5, 28.42], // translation
-      "etype": "plat",  // actor type
-      "game_task": 0, // associated game task (for powercells, etc)
-      "quat": [0, 0, 0, 1], // quaternion
-      "bsphere": [-7.41, 3.5, 28.42, 10], // bounding sphere
-      "lump": {
-        "name": "test-plat"
-      }
-    }
+//End automatic actors from blender
+{
+  "trans": [-21.6238, 20.0496, 17.1191], // translation
+  "etype": "fuel-cell",  // actor type
+  "game_task": 0, // associated game task (for powercells, etc)
+  "quat" : [0, 0, 0, 1], // quaternion
+  "bsphere": [-21.6238, 19.3496, 17.1191, 10], // bounding sphere
+  "lump": {
+    "name":"test-fuel-cell"
+  }
+}
   ]
 }
