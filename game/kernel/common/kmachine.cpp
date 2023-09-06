@@ -112,65 +112,220 @@ u64 CPadOpen(u64 cpad_info, s32 pad_number) {
 
 
 
-void playMP3(u32 filePathu32, u32 volume)
-{
- 
+// Define a vector to store references to the active music instances.
+std::vector<std::pair<sf::Music*, std::string>> activeMusics;
 
+// Index to store the main music in the vector.
+const size_t MAIN_MUSIC_INDEX = 0;
+
+// Function to stop all currently playing sounds.
+void stopAllSounds()
+{
+    for (auto& pair : activeMusics)
+    {
+        pair.first->stop();
+    }
+    activeMusics.clear();
+}
+
+// Function to get the names of currently playing files.
+std::vector<std::string> getPlayingFileNames()
+{
+    std::vector<std::string> playingFileNames;
+    for (const auto& pair : activeMusics)
+    {
+        playingFileNames.push_back(pair.second);
+    }
+    return playingFileNames;
+}
+
+// Function to play an MP3 file.
+void playMP3(u32 filePathu32, u32 volume) {
     // Spawn a new thread to play the music.
     std::thread thread([=]() {
-    std::string filePath = Ptr<String>(filePathu32).c()->data();
-    std::cout << "Playing MP3: " << filePath << std::endl;
+      std::string filePath = Ptr<String>(filePathu32).c()->data();
+        std::cout << "Playing MP3: " << filePath << std::endl;
 
-    sf::Music music;
-    if (!music.openFromFile(filePath))
-    {
-        std::cout << "Failed to load: " << filePath << std::endl;
-        return;
-    }
-        music.setVolume(volume);
-        music.play();
-        while (music.getStatus() == sf::Music::Playing)
+        sf::Music* music = new sf::Music;
+        if (!music->openFromFile(filePath))
+        {
+            std::cout << "Failed to load: " << filePath << std::endl;
+            delete music;
+            return;
+        }
+        music->setVolume(volume);
+        music->play();
+
+        // Add the music instance and its file name to the active list.
+        activeMusics.push_back(std::make_pair(music, filePath));
+
+        while (music->getStatus() == sf::Music::Playing)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        music.stop();
+        // Remove the music instance from the active list and clean up.
+        activeMusics.erase(std::remove_if(activeMusics.begin(), activeMusics.end(),
+            [music](const auto& pair) { return pair.first == music; }), activeMusics.end());
+        delete music;
     });
 
     // Detach the thread so it can run independently.
     thread.detach();
 }
 
-// void playMP3(u32 filePathu32, u32 volume)
-// {
+// Define a separate sf::Music pointer for the Main Music.
+sf::Music* mainMusicInstance = nullptr;
 
+// Define a flag to track the state of the Main Music.
+bool isMainMusicPaused = false;
+
+// Function to play the Main Music.
+void playMainMusic(u32 filePathu32, u32 volume) {
+    std::string filePath = Ptr<String>(filePathu32).c()->data();
+    std::cout << "Playing Main Music: " << filePath << std::endl;
+
+    // Stop and clean up the previous Main Music instance, if it exists.
+    if (mainMusicInstance) {
+        mainMusicInstance->stop();
+        delete mainMusicInstance;
+        mainMusicInstance = nullptr;
+    }
+
+    // Spawn a new thread to play the Main Music.
+    std::thread thread([=]() {
+        sf::Music* mainMusic = new sf::Music;
+        if (!mainMusic->openFromFile(filePath))
+        {
+            std::cout << "Failed to load: " << filePath << std::endl;
+            delete mainMusic;
+            return;
+        }
+        mainMusic->setVolume(volume);
+        mainMusic->play();
+
+        // Set the Main Music instance.
+        mainMusicInstance = mainMusic;
+        isMainMusicPaused = false;
+
+        while (mainMusic->getStatus() == sf::Music::Playing || mainMusic->getStatus() == sf::Music::Paused)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    });
+
+    // Detach the thread so it can run independently.
+    thread.detach();
+}
+
+// Function to change the volume of the Main Music.
+void changeMainMusicVolume(u32 volume) {
+    if (mainMusicInstance) {
+        mainMusicInstance->setVolume(volume);
+    }
+}
+
+// Function to pause or resume the Main Music.
+// Function to toggle between pausing and resuming the Main Music.
+void playPauseMainMusic()
+{
+    if (mainMusicInstance)
+    {
+        if (mainMusicInstance->getStatus() == sf::Music::Playing)
+        {
+            mainMusicInstance->pause();
+        }
+        else if (mainMusicInstance->getStatus() == sf::Music::Paused)
+        {
+            mainMusicInstance->play();
+        }
+        else if (mainMusicInstance->getStatus() == sf::Music::Stopped)
+        {
+            // If Main Music is stopped, start playing it.
+            mainMusicInstance->play();
+        }
+    }
+
+}
+
+
+
+
+
+// void playMainMusic(u32 filePathu32, u32 volume) {
 //     std::string filePath = Ptr<String>(filePathu32).c()->data();
-//     std::cout << "Playing MP3: " << filePath << std::endl;
-//     sf::Music music;
 
-//     std::ifstream file(filePath);
-//     if (!file)
-//     {
-//         std::cout << "Invalid file path: " << filePath << std::endl;
+//     // Check if activeMusics vector is empty.
+//     if (activeMusics.empty()) {
+//         std::cout << "No active music instances found." << std::endl;
 //         return;
 //     }
 
-//     if (!music.openFromFile(filePath))
-//     {
-//         printf("Failed to load: %s\n", filePath.c_str());
+//     // Check if MAIN_MUSIC_INDEX is out of bounds.
+//     if (MAIN_MUSIC_INDEX >= activeMusics.size()) {
+//         std::cout << "MAIN_MUSIC_INDEX is out of bounds." << std::endl;
+//         return;
+//     }
+
+//     sf::Music* mainMusic = activeMusics[MAIN_MUSIC_INDEX].first;
+
+//     if (mainMusic->getStatus() == sf::Music::Playing) {
+//         mainMusic->stop();  // Stop currently playing music before playing a new one.
+//     }
+
+//     std::cout << "Trying to load: " << filePath << std::endl;
+//     if (mainMusic->openFromFile(filePath)) {
+//         mainMusic->setVolume(volume);
+//         mainMusic->play();
+//     } else {
 //         std::cout << "Failed to load: " << filePath << std::endl;
-//         return;
-//     }
-
-//     music.setVolume(volume);
-//     music.play();
-
-//     while (music.getStatus() == sf::Music::Playing)
-//     {
-//         sf::sleep(sf::milliseconds(100));
-//        sf::sleep(sf::milliseconds(100));
 //     }
 // }
+
+// // Function to manage pausing and resuming the main music.
+// void playPauseMainMusic()
+// {
+//     sf::Music* mainMusic = activeMusics[MAIN_MUSIC_INDEX].first;
+
+//     if (mainMusic->getStatus() == sf::Music::Playing)
+//     {
+//         mainMusic->pause();
+//     }
+//     else if (mainMusic->getStatus() == sf::Music::Paused)
+//     {
+//         mainMusic->play();
+//     }
+// }
+
+// // Function to pause the main music.
+// void pauseMainMusic()
+// {
+//     sf::Music* mainMusic = activeMusics[MAIN_MUSIC_INDEX].first;
+
+//     if (mainMusic->getStatus() == sf::Music::Playing)
+//     {
+//         mainMusic->pause();
+//     }
+// }
+
+// // Function to resume the main music.
+// void resumeMainMusic()
+// {
+//     sf::Music* mainMusic = activeMusics[MAIN_MUSIC_INDEX].first;
+
+//     if (mainMusic->getStatus() == sf::Music::Paused)
+//     {
+//         mainMusic->play();
+//     }
+// }
+
+// // Function to stop the main music.
+// void stopMainMusic()
+// {
+//     sf::Music* mainMusic = activeMusics[MAIN_MUSIC_INDEX].first;
+//     mainMusic->stop();
+// }
+
 
 
 /*!
@@ -985,7 +1140,13 @@ void init_common_pc_port_functions(
   make_func_symbol_func("pc-mkdir-file-path", (void*)pc_mkdir_filepath);
 
   //Play sound file
-  make_func_symbol_func("play-rand-sound", (void*)playMP3);  
+  make_func_symbol_func("play-rand-sound", (void*)playMP3);
+
+
+  make_func_symbol_func("play-main-music", (void*)playMainMusic);
+  make_func_symbol_func("pause-play-main-music", (void*)playPauseMainMusic);
+  make_func_symbol_func("stop-main-music", (void*)playPauseMainMusic);
+  make_func_symbol_func("main-music-volume", (void*)changeMainMusicVolume);
   // discord rich presence
   make_func_symbol_func("pc-discord-rpc-set", (void*)set_discord_rpc);
 

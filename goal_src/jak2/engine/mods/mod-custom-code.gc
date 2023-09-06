@@ -87,7 +87,14 @@
 
     (defun runs-on-jak-spawn ()
       ;; Code here runs every time jak spawns (loading a file new game or death)   
-
+        (case (-> (level-get-target-inside *level*) name)
+         (('test-zone)
+          (play-main-music "C:\\Users\\NinjaPC\\Documents\\Github\\adding-random-levels\\SND\\music2.mp3" 100)
+          )
+          (else
+          (stop-main-music)
+          )
+         )
       (none)
       )
 
